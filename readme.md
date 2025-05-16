@@ -33,8 +33,8 @@ cd spot-sdk
 
 ```bash
 python3 -m pip install virtualenv
-python3 -m virtualenv --python=/usr/bin/python3 helloboston
-source helloboston/bin/activate
+python3 -m virtualenv --python=/usr/bin/python3 spotspin
+source spotspin/bin/activate
 ```
 
 #### 3. Install Required Python Packages
