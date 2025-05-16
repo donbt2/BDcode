@@ -48,10 +48,31 @@ def main():
 
     print("Spot is powered on. Sending stand command...")
     command_client.robot_command(RobotCommandBuilder.synchro_stand_command())
-    time.sleep(10)
+    time.sleep(3)
+
+    print("Spinning Spot twice...")
+    for _ in range(2):
+        spin_command = RobotCommandBuilder.synchro_velocity_command(0.0, 0.0, 1.0)  # 1 rad/s
+        command_client.robot_command(spin_command)
+        time.sleep(3)
+        command_client.robot_command(RobotCommandBuilder.synchro_velocity_command(0.0, 0.0, 0.0))
+        time.sleep(1)
+
+    print("Moving Spot up and down...")
+    for _ in range(2):
+        up_command = RobotCommandBuilder.synchro_stand_command(body_height=0.2)
+        command_client.robot_command(up_command)
+        time.sleep(2)
+        down_command = RobotCommandBuilder.synchro_stand_command(body_height=-0.2)
+        command_client.robot_command(down_command)
+        time.sleep(2)
+
+    # Return to normal height
+    command_client.robot_command(RobotCommandBuilder.synchro_stand_command())
+    time.sleep(2)
 
     # Power off
-    print("Command complete. Powering off Spot...")
+    print("Command sequence complete. Powering off Spot...")
     power_client.safe_power_off()
 
     # Return lease and stop e-stop
