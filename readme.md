@@ -1,4 +1,4 @@
-# 🐶 Boston Dynamics Spot – SDK Setup & Basic Control Script
+# Boston Dynamics Spot – SDK Setup & Basic Control Script
 
 This repository provides:
 
@@ -47,7 +47,7 @@ python3
 
 ---
 
-## 🤖 2. Set Up Estop (Emergency Stop)
+## 2. Set Up Estop (Emergency Stop)
 
 Spot requires an Estop system to be engaged before executing any robot commands.
 
