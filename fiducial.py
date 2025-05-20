@@ -8,8 +8,7 @@ from bosdyn.client.world_object import WorldObjectClient
 from bosdyn.client.frame_helpers import get_a_tform_b, VISION_FRAME_NAME, BODY_FRAME_NAME
 from bosdyn.client.robot_state import RobotStateClient
 from bosdyn.client.robot_command import blocking_stand
-from bosdyn.client import math_helpers
-import sys
+from bosdyn.api import geometry_pb2
 
 TARGET_DISTANCE = 1.0  # Default distance to maintain (meters)
 MAX_SPEED = 0.5  # Maximum speed (m/s)
@@ -32,17 +31,25 @@ def get_tag_pose(world_object_client, robot_state_client, tag_id):
                 except Exception:
                     continue
     except Exception as e:
-        print(f"Failed to get tag pose: {e}", file=sys.stderr)
+        print(f"Failed to get tag pose: {e}")
     return None
 
 def is_obstacle_nearby(robot_state_client):
-    state = robot_state_client.get_robot_state()
-    front_proximity = state.kinematic_state.foot_height_time_series
+    # This function checks for obstacles using the depth data
+    robot_state = robot_state_client.get_robot_state()
+    obstacle_threshold = 0.5  # Meters
 
-    # Insert logic to check if there's an obstacle nearby using Spot's proximal sensors
-    # This is a placeholder example
-    obstacle_threshold = 0.5
-    return any(detection.range < obstacle_threshold for detection in front_proximity)
+    # Access camera data from the kinematic state
+    # (The specific attribute/method may differ based on actual SDK structure)
+    for frame_name, transform in robot_state.kinematic_state.transforms_snapshot.child_to_parent_edge_map.items():
+        # The condition below should match the actual depth camera frame/transform 
+        if "depth" in frame_name.lower():
+            distance = transform.parent_tform_child.position.x
+            if distance < obstacle_threshold:
+                print(f"Obstacle detected at distance: {distance} meters.")
+                return True
+
+    return False
 
 def follow_tag(robot_command_client, world_object_client, robot_state_client, target_distance, max_speed, tag_id):
     print("Following AprilTag...")
